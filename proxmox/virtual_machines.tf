@@ -1,6 +1,6 @@
 resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   depends_on  = [proxmox_storage_iso.talos_linux_iso_image]
-  name        = "Kubernetes-Harbor"
+  name        = var.node_data.hostname
   desc        = "Kubernetes Control Plane"
   target_node = var.proxmox_target_node
   agent       = 1

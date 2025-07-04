@@ -26,7 +26,6 @@ resource "talos_machine_configuration_apply" "controlplane" {
       ip_address      = "${var.node_data.ip_address}/24"
       network         = var.network
       network_gateway = var.network_gateway
-      vip_shared_ip   = var.vip_shared_ip
     }),
     file("${path.module}/files/cp-scheduling.yaml"),
   ]
