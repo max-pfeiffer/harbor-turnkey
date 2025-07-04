@@ -19,7 +19,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
   machine_configuration_input = data.talos_machine_configuration.controlplane.machine_configuration
   node                        = var.node_data.ip_address
   config_patches = [
-    templatefile("${path.module}/templates/machine_config_patches_controlplane.tftpl", {
+    templatefile("${path.module}/machine_config_patches/controlplane.tftpl", {
       hostname        = var.node_data.hostname
       install_disk    = var.node_data.install_disk
       install_image   = var.node_data.install_image
@@ -27,7 +27,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       network         = var.network
       network_gateway = var.network_gateway
     }),
-    file("${path.module}/files/cp-scheduling.yaml"),
+    file("${path.module}/machine_config_patches/uservolumes.yaml"),
   ]
 }
 resource "talos_machine_bootstrap" "this" {

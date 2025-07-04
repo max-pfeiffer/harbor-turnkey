@@ -1,0 +1,10 @@
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 250GB
+  maxSize: 250GB
+
