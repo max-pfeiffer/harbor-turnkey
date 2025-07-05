@@ -1,0 +1,7 @@
+expose:
+  tls:
+    enabled: false
+  ingress:
+    hosts:
+      core: harbor.lan
+    className: "nginx"

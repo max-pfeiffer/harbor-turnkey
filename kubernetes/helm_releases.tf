@@ -1,18 +1,17 @@
 resource "helm_release" "metallb_load_balancer" {
-  depends_on = [kubernetes_namespace.metallb_system]
   name       = "metallb"
   chart      = "metallb"
-  version    = "0.14.9"
+  version    = "0.15.2"
   repository = "https://metallb.github.io/metallb"
-  namespace  = kubernetes_namespace.metallb_system.id
-  timeout    = 300
+  namespace  = kubernetes_namespace_v1.metallb_system.id
+  timeout    = 60
 }
 
 resource "helm_release" "metallb_load_balancer_config" {
   depends_on = [helm_release.metallb_load_balancer]
   name       = "metallb-config"
   chart      = "${path.module}/helm_charts/metallb-config"
-  namespace  = kubernetes_namespace.metallb_system.id
+  namespace  = kubernetes_namespace_v1.metallb_system.id
   timeout    = 60
 }
 
@@ -22,8 +21,21 @@ resource "helm_release" "nginx_ingress_controller" {
   ]
   name       = "ingress-nginx"
   chart      = "ingress-nginx"
-  version    = "4.11.4"
+  version    = "4.12.3"
   repository = "https://kubernetes.github.io/ingress-nginx"
-  namespace  = kubernetes_namespace.ingress.id
-  timeout    = 300
+  namespace  = kubernetes_namespace_v1.ingress.id
+  timeout    = 60
 }
+
+# resource "helm_release" "harbor" {
+#   depends_on = [
+#     helm_release.metallb_load_balancer_config,
+#   ]
+#   name       = "harbor"
+#   chart      = "harbor"
+#   version    = "1.17.1"
+#   repository = "https://helm.goharbor.io"
+#   namespace  = kubernetes_namespace.applications.id
+#   timeout    = 60
+# }
+#

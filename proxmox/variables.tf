@@ -42,8 +42,6 @@ variable "node_data" {
   }
 }
 
-
-
 variable "network" {
   description = "Network for all nodes"
   type        = string
