@@ -11,7 +11,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   nameserver  = var.domain_name_server
 
   cpu {
-    cores   = 2
+    cores = 2
   }
 
   vga {

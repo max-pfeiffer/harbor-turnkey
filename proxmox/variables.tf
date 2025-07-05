@@ -19,11 +19,7 @@ variable "proxmox_target_node" {
 variable "cluster_name" {
   description = "A name to provide for the Talos cluster"
   type        = string
-}
-
-variable "cluster_endpoint" {
-  description = "The endpoint for the Talos cluster"
-  type        = string
+  default     = "harbor"
 }
 
 variable "node_data" {
@@ -35,7 +31,7 @@ variable "node_data" {
     hostname      = string
   })
   default = {
-    ip_address    = "192.168.20.3"
+    ip_address    = "192.168.20.4"
     install_disk  = "/dev/vda"
     install_image = "factory.talos.dev/nocloud-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.10.5"
     hostname      = "kubernetes-harbor"
@@ -58,12 +54,6 @@ variable "domain_name_server" {
   description = "DNS for all nodes"
   type        = string
   default     = "192.168.20.1"
-}
-
-variable "vip_shared_ip" {
-  description = "Shared virtual IP address for control plane nodes"
-  type        = string
-  default     = "192.168.20.3"
 }
 
 variable "vlan_tag" {

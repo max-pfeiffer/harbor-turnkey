@@ -12,5 +12,8 @@ machine:
         routes:
           - network: ${network}
             gateway: ${network_gateway}
+  nodeLabels:
+    node.kubernetes.io/exclude-from-external-load-balancers:
+        $patch: delete # allow loadbalancer l2 advertisement on the controlplane
 cluster:
   allowSchedulingOnControlPlanes: true

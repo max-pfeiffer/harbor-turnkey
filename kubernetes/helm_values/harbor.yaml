@@ -1,7 +1,15 @@
 expose:
   tls:
-    enabled: false
+    enabled: true
   ingress:
     hosts:
       core: harbor.lan
     className: "nginx"
+externalURL: https://harbor.lan
+persistence:
+  persistentVolumeClaim:
+    registry:
+      size: 200Gi
+existingSecretAdminPassword: "harbor"
+imagePullSecrets:
+  - name: docker-registry-secret

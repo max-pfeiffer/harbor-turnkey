@@ -2,7 +2,7 @@ resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "controlplane" {
   cluster_name     = var.cluster_name
-  cluster_endpoint = "https://${var.vip_shared_ip}:6443"
+  cluster_endpoint = "https://${var.node_data.ip_address}:6443"
   machine_type     = "controlplane"
   machine_secrets  = talos_machine_secrets.this.machine_secrets
 }

@@ -1,10 +1,81 @@
 ---
 apiVersion: v1alpha1
 kind: UserVolumeConfig
-name: local
+name: local-large-1
 provisioning:
   diskSelector:
     match: disk.dev_path == "/dev/vdb"
-  minSize: 250GB
-  maxSize: 250GB
-
+  minSize: 200GB
+  maxSize: 200GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-medium-1
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 10GB
+  maxSize: 10GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-medium-2
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 10GB
+  maxSize: 10GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-1
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-2
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-3
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-4
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-5
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-small-6
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/vdb"
+  minSize: 5GB
+  maxSize: 5GB
