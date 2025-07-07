@@ -1,7 +1,7 @@
-# Kubernetes Single Node Cluster using Talos Linux on Proxmox Hypervisor
-This infrastructure as code (IaC) project installs a single node Kubernetes cluster with a fully functional
-[Harbor instance](https://goharbor.io/) on your Proxmox hypervisor.
-It uses Talos Linux as an operating system for running Kubernetes. The provisioning is done with OpenTofu.
+# Harbor on a Kubernetes Single Node Cluster using Talos Linux and a Proxmox Hypervisor
+This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
+It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and Proxmox as hypervisor.
+The provisioning is done with OpenTofu.
 
 # Usage
 First clone the repo. The provisioning with OpenTofu needs to be done in two steps:
