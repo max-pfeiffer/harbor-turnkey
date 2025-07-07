@@ -6,11 +6,11 @@ resource "kubernetes_secret" "docker_hub" {
   type = "kubernetes.io/dockerconfigjson"
   data = {
     ".dockerconfigjson" = templatefile("${path.module}/templates/docker_config_json.tftpl", {
-      docker-username = "${var.docker_username}"
-      docker-password = "${var.docker_password}"
+      docker-username = var.docker_hub_username
+      docker-password = var.docker_hub_password
       docker-server   = "https://index.docker.io/v1/"
-      docker-email    = "${var.docker_email}"
-      auth            = base64encode("${var.docker_username}:${var.docker_password}")
+      docker-email    = var.docker_hub_email
+      auth            = base64encode("${var.docker_hub_username}:${var.docker_hub_password}")
     })
   }
 }

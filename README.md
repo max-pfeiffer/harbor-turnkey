@@ -1,1 +1,50 @@
-# proxmox-talos-harbor-opentofu
+# Kubernetes Single Node Cluster using Talos Linux on Proxmox Hypervisor
+This infrastructure as code (IaC) project installs a single node Kubernetes cluster with a fully functional
+[Harbor instance](https://goharbor.io/) on your Proxmox hypervisor.
+It uses Talos Linux as an operating system for running Kubernetes. The provisioning is done with OpenTofu.
+
+# Usage
+First clone the repo. The provisioning with OpenTofu needs to be done in two steps:
+1. Create the VM on Proxmox hypervisor and install Kubernetes
+2. Install Harbor and all applications in the Kubernetes cluster
+
+## Install Virtual Machine with Talos Linux on Proxmox
+Go to `proxmox` subdirectory and create a `credentials.auto.tfvars` file using the example:
+```shell
+$ cp credentials.auto.tfvars.example credentials.auto.tfvars 
+```
+Then add your credentials to the new file. 
+
+Create the virtual machine, install and configure Talos Linux:
+```shell
+$ tofu init
+$ tofu plan
+$ tofu apply
+```
+
+## Install Harbor and all other Applications
+Same here: Go to `kubernetes` subdirectory and create a `credentials.auto.tfvars` file using the example:
+```shell
+$ cp credentials.auto.tfvars.example credentials.auto.tfvars 
+```
+Then add your credentials to the new file. 
+
+Install Harbor and all other applications into the Kubernetes cluster:
+```shell
+$ tofu init
+$ tofu plan
+$ tofu apply
+```
+
+## Information Sources
+* [Talos Linux documentation](https://www.talos.dev/v1.8/)
+* [Talos Linux Image Factory](https://factory.talos.dev/)
+* Terraform providers/modules
+  * Baremetal provisioning
+    * [terraform-provider-proxmox](https://github.com/Telmate/terraform-provider-proxmox)
+    * [terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos)
+  * Kubernetes
+    * [terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes)
+    * [terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm)
+  * Applications
+    * [terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor)

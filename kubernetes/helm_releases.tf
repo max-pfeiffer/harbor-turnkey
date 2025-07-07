@@ -27,10 +27,10 @@ resource "helm_release" "metallb_load_balancer_config" {
   depends_on = [
     helm_release.metallb_load_balancer,
   ]
-  name       = "metallb-config"
-  chart      = "${path.module}/helm_charts/metallb-config"
-  namespace  = kubernetes_namespace_v1.metallb_system.id
-  timeout    = 60
+  name      = "metallb-config"
+  chart     = "${path.module}/helm_charts/metallb-config"
+  namespace = kubernetes_namespace_v1.metallb_system.id
+  timeout   = 60
 }
 
 
