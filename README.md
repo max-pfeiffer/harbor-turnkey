@@ -1,14 +1,14 @@
-# Harbor on a Kubernetes Single Node Cluster using Talos Linux and a Proxmox Hypervisor
+# Harbor on a Kubernetes Single Node Cluster using Talos Linux and Proxmox VE
 This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
 It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and Proxmox as hypervisor.
 The provisioning is done with OpenTofu.
 
-# Usage
+## Usage
 First clone the repo. The provisioning with OpenTofu needs to be done in two steps:
 1. Create the VM on Proxmox hypervisor and install Kubernetes
 2. Install Harbor and all applications in the Kubernetes cluster
 
-## Install Virtual Machine with Talos Linux on Proxmox
+### Install Virtual Machine with Talos Linux on Proxmox
 Go to `proxmox` subdirectory and create a `credentials.auto.tfvars` file using the example:
 ```shell
 $ cp credentials.auto.tfvars.example credentials.auto.tfvars 
@@ -22,7 +22,7 @@ $ tofu plan
 $ tofu apply
 ```
 
-## Install Harbor and all other Applications
+### Install Harbor and all other Applications
 Same here: Go to `kubernetes` subdirectory and create a `credentials.auto.tfvars` file using the example:
 ```shell
 $ cp credentials.auto.tfvars.example credentials.auto.tfvars 
