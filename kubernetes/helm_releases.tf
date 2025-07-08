@@ -7,22 +7,6 @@ resource "helm_release" "metallb_load_balancer" {
   timeout    = 60
 }
 
-# resource "helm_release" "cert_manager" {
-#   name       = "cert-manager"
-#   chart      = "cert-manager"
-#   version    = "1.17.1"
-#   repository = "https://charts.jetstack.io"
-#   namespace  = kubernetes_namespace_v1.cert_manager.id
-#   timeout    = 120
-#
-#   set = [
-#     {
-#       name  = "crds.enabled"
-#       value = "true"
-#     }
-#   ]
-# }
-
 resource "helm_release" "metallb_load_balancer_config" {
   depends_on = [
     helm_release.metallb_load_balancer,
@@ -33,9 +17,99 @@ resource "helm_release" "metallb_load_balancer_config" {
   timeout   = 60
 }
 
+resource "helm_release" "step_certificates" {
+  depends_on = [
+    kubernetes_secret_v1.docker_hub_namespace_security
+  ]
+  name       = "step-certificates"
+  chart      = "step-certificates"
+  version    = "1.28.2"
+  repository = "https://smallstep.github.io/helm-charts/"
+  namespace  = kubernetes_namespace_v1.security.id
+  timeout    = 120
+  values = [
+    templatefile("${path.module}/helm_values/step-certificates.yaml", {
+      root_ca_password            = base64encode(var.root_ca_password)
+      root_ca_certificate         = var.root_ca_certificate
+      root_ca_key                 = var.root_ca_key
+      intermediate_ca_certificate = var.intermediate_ca_certificate
+      intermediate_ca_key         = var.intermediate_ca_key
+    })
+  ]
+}
+
+data "kubernetes_config_map" "step_certificates_certs" {
+  depends_on = [helm_release.step_certificates]
+  metadata {
+    name      = "step-certificates-certs"
+    namespace = "security"
+  }
+}
+
+data "kubernetes_config_map" "step_certificates_config" {
+  depends_on = [helm_release.step_certificates]
+  metadata {
+    name      = "step-certificates-config"
+    namespace = "security"
+  }
+}
+
+resource "helm_release" "step_issuer" {
+  depends_on = [
+    kubernetes_secret_v1.docker_hub_namespace_security,
+    helm_release.step_certificates,
+    data.kubernetes_config_map.step_certificates_certs,
+    data.kubernetes_config_map.step_certificates_config
+  ]
+  name       = "step-issuer"
+  chart      = "step-issuer"
+  version    = "1.9.7"
+  repository = "https://smallstep.github.io/helm-charts/"
+  namespace  = kubernetes_namespace_v1.security.id
+  timeout    = 120
+  values = [
+    templatefile("${path.module}/helm_values/step-issuer.yaml", {
+      ca_url                            = jsondecode(data.kubernetes_config_map.step_certificates_config.data["defaults.json"]).ca-url
+      ca_bundle                         = base64encode(data.kubernetes_config_map.step_certificates_certs.data["root_ca.crt"])
+      provisioner_name                  = jsondecode(data.kubernetes_config_map.step_certificates_config.data["ca.json"]).authority.provisioners[0].name
+      provisioner_kid                   = jsondecode(data.kubernetes_config_map.step_certificates_config.data["ca.json"]).authority.provisioners[0].key.kid
+      provisioner_passwordref_name      = "step-certificates-provisioner-password"
+      provisioner_passwordref_key       = "password"
+      provisioner_passwordref_namespace = kubernetes_namespace_v1.security.id
+    })
+  ]
+}
+
+resource "helm_release" "cert_manager" {
+  depends_on = [
+    kubernetes_secret_v1.docker_hub_namespace_cert_manager,
+    helm_release.step_certificates,
+    helm_release.step_issuer
+  ]
+  name       = "cert-manager"
+  chart      = "cert-manager"
+  version    = "1.17.1"
+  repository = "https://charts.jetstack.io"
+  namespace  = kubernetes_namespace_v1.cert_manager.id
+  timeout    = 120
+
+  set = [
+    {
+      name  = "global.imagePullSecrets[0].name"
+      value = "docker-hub"
+    },
+    {
+      name  = "crds.enabled"
+      value = "true"
+    }
+  ]
+}
+
+
 
 resource "helm_release" "nginx_ingress_controller" {
   depends_on = [
+    kubernetes_secret_v1.docker_hub_namespace_ingress,
     helm_release.metallb_load_balancer_config,
   ]
   name       = "ingress-nginx"
@@ -44,11 +118,18 @@ resource "helm_release" "nginx_ingress_controller" {
   repository = "https://kubernetes.github.io/ingress-nginx"
   namespace  = kubernetes_namespace_v1.ingress.id
   timeout    = 60
+  set = [
+    {
+      name  = "imagePullSecrets[0].name"
+      value = "docker-hub"
+    },
+  ]
+
 }
 
 resource "helm_release" "harbor" {
   depends_on = [
-    helm_release.nginx_ingress_controller,
+    kubernetes_secret_v1.docker_hub_namespace_applications,
     kubernetes_storage_class_v1.local,
     kubernetes_persistent_volume_v1.local_large_1,
     kubernetes_persistent_volume_v1.local_medium_1,
@@ -59,6 +140,7 @@ resource "helm_release" "harbor" {
     kubernetes_persistent_volume_v1.local_small_4,
     kubernetes_persistent_volume_v1.local_small_5,
     kubernetes_persistent_volume_v1.local_small_6,
+    helm_release.nginx_ingress_controller,
   ]
   name       = "harbor"
   chart      = "harbor"

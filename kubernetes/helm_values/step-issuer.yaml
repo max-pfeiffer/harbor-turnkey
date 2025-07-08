@@ -1,0 +1,15 @@
+image:
+  repository: "smallstep/step-issuer"
+imagePullSecrets:
+  - "docker-hub"
+stepClusterIssuer:
+  create: true
+  caUrl: ${ca_url}
+  caBundle: ${ca_bundle}
+  provisioner:
+    name: ${provisioner_name}
+    kid: ${provisioner_kid}
+    passwordRef:
+      name: ${provisioner_passwordref_name}
+      key: ${provisioner_passwordref_key}
+      namespace: ${provisioner_passwordref_namespace}

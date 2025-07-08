@@ -48,3 +48,10 @@ $ tofu apply
     * [terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm)
   * Applications
     * [terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor)
+* Helm charts:
+  * Certificate Authority
+    * [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates)
+    * [step-issuer](https://artifacthub.io/packages/helm/smallstep/step-issuer)
+  * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
+  * [ingress-nginx](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
+  * [Harbor](https://github.com/goharbor/harbor-helm)

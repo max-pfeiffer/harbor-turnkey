@@ -1,15 +1,22 @@
 expose:
   tls:
     enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls
   ingress:
     hosts:
       core: harbor.lan
-    className: "nginx"
+    className: nginx
+    annotations:
+      cert-manager.io/issuer: step-issuer
+      cert-manager.io/issuer-group: certmanager.step.sm
+      cert-manager.io/issuer-kind: StepClusterIssuer
 externalURL: https://harbor.lan
 persistence:
   persistentVolumeClaim:
     registry:
       size: 200Gi
-existingSecretAdminPassword: "harbor"
+existingSecretAdminPassword: "harbor-admin"
 imagePullSecrets:
   - name: docker-registry-secret

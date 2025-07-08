@@ -1,0 +1,71 @@
+image:
+  repository: "smallstep/step-ca"
+  imagePullSecrets:
+    - "docker-hub"
+inject:
+  enabled: true
+  # Config contains the configuration files ca.json and defaults.json
+  config:
+    files:
+      ca.json:
+        root: /home/step/certs/root_ca.crt
+        federateRoots: []
+        crt: /home/step/certs/intermediate_ca.crt
+        key: /home/step/secrets/intermediate_ca_key
+        address: :9000
+        dnsNames:
+          - step-certificates.security.svc.cluster.local
+        logger:
+          format: json
+        db:
+          type: badgerv2
+          dataSource: /home/step/db
+        authority:
+          enableAdmin: false
+          provisioners:
+            - {"type":"JWK","name":"cert-manager","key":{"use":"sig","kty":"EC","kid":"jJpXP69Fo3ZNa4D3ei6OZhydNqLo5Jp0HpzxPzpc7Xg","crv":"P-256","alg":"ES256","x":"COx1LeQ0uAuaKjL_AsIB5lfUU1Ku5fnZ10KbhHGyLds","y":"veIIYdJgqNDYEntZhJKMbV_hABE6SPRy55-91T2FD2o"},"encryptedKey":"eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJjdHkiOiJqd2sranNvbiIsImVuYyI6IkEyNTZHQ00iLCJwMmMiOjYwMDAwMCwicDJzIjoiS0tyNGRmNXA0cUxaRmFuTDdMMXVBdyJ9.xHsV-72_VzvHjPSO4vYms_UbH4erc4wwQxXDaLpWOO7bMgTq4TEVrQ.e1NNGE3vMrNFllpb.txyNy8r4HckUDHgRDYNbaHsLeNemrsuvBkloYWpGWD3jK5nlpA70K7mQrl5sI8fkJMmwqrDr9qaRrMeyK0Ci57nUZypAO8eL1jnpNmiv4pcnKDJq31f7sTNGL_1UrtZCjD6vel7zpJxkUtePCxrD3xeZT7i0ggFR6KXSaWcMIJ_kpYZtW8eFpE5c0AvBgRQdCrT_sawCVOwwGkST4ojr1ZZmqbSY8WWBHw_yRaWH5LBvL9UM1lg-tQclLd1ygyZZrV-O6cC7BjBgz1YKPnfEfYh_cB9KjS94NLX2irH9Q3bYmaicjZhpHBGtlVNBXhTuaNkHI-rW7XTzwwVY91c.H12RC6yQ2IMgL7VAxj13xw","options":{"x509":{},"ssh":{}}}
+        tls:
+          cipherSuites:
+            - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+            - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+          minVersion: 1.2
+          maxVersion: 1.3
+          renegotiation: false
+
+      defaults.json:
+        ca-url: https://step-certificates.security.svc.cluster.local
+        ca-config: /home/step/config/ca.json
+        fingerprint: d18aceb91a652cad7894b00ac95bb713c948e63602c08dd6ffafe7d8db8c0afb
+        root: /home/step/certs/root_ca.crt
+
+  # Certificates contains the root and intermediate certificate and 
+  # optionally the SSH host and user public keys
+  certificates:
+    # intermediate_ca contains the text of the intermediate CA Certificate
+    intermediate_ca: |
+      ${indent(6, intermediate_ca_certificate)}      
+      
+    # root_ca contains the text of the root CA Certificate
+    root_ca: |
+      ${indent(6, root_ca_certificate)}
+
+  # Secrets contains the root and intermediate keys and optionally the SSH
+  # private keys
+  secrets:
+    # ca_password contains the password used to encrypt x509.intermediate_ca_key, ssh.host_ca_key and ssh.user_ca_key
+    # This value must be base64 encoded.
+    ca_password: "${root_ca_password}"
+    provisioner_password: "${root_ca_password}"
+
+    x509:
+      # intermediate_ca_key contains the contents of your encrypted intermediate CA key
+      intermediate_ca_key: |
+        ${indent(8, intermediate_ca_key)}
+        
+
+      # root_ca_key contains the contents of your encrypted root CA key
+      # Note that this value can be omitted without impacting the functionality of step-certificates
+      # If supplied, this should be encrypted using a unique password that is not used for encrypting
+      # the intermediate_ca_key, ssh.host_ca_key or ssh.user_ca_key.
+      root_ca_key: |
+        ${indent(8, root_ca_key)}

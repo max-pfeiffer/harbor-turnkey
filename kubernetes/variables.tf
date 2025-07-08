@@ -1,3 +1,7 @@
+variable "harbor_admin_password" {
+  type      = string
+  sensitive = true
+}
 
 variable "docker_hub_username" {
   type      = string
@@ -14,9 +18,29 @@ variable "docker_hub_email" {
   sensitive = true
 }
 
-variable "harbor_domain" {
+variable "root_ca_password" {
   type      = string
-  default = "harbor.lan"
+  sensitive = true
+}
+
+variable "intermediate_ca_certificate" {
+  type      = string
+  sensitive = true
+}
+
+variable "intermediate_ca_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "root_ca_certificate" {
+  type      = string
+  sensitive = true
+}
+
+variable "root_ca_key" {
+  type      = string
+  sensitive = true
 }
 
 variable "harbor_url" {
