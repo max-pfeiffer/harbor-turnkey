@@ -30,12 +30,12 @@ step ca init --helm > config.yaml
 ```
 This will result in some interactive process where you need to enter the following configuration options:
 
-1. Deployment Type: you want to select `Standalone` here
+1. Deployment Type: `Standalone`
 2. Name of the PKI: `Harbor`
 3. DNS names: `step-certificates.security.svc.cluster.local`
 4. IP and port: `:9000`
 5. First provisioner name: `cert-manager`
-6. Password: generate one and capture it, this needs to go into `credentials.auto.tfvars` as `root_ca_password`
+6. Password: generate and capture it, this needs to go into `credentials.auto.tfvars` as `root_ca_password`
 
 Go to `kubernetes` subdirectory and create a `credentials.auto.tfvars` file using the example:
 ```shell
