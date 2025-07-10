@@ -23,27 +23,7 @@ variable "root_ca_password" {
   sensitive = true
 }
 
-variable "intermediate_ca_certificate" {
-  type      = string
-  sensitive = true
-}
-
-variable "intermediate_ca_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "root_ca_certificate" {
-  type      = string
-  sensitive = true
-}
-
-variable "root_ca_key" {
-  type      = string
-  sensitive = true
-}
-
 variable "harbor_url" {
-  type      = string
+  type    = string
   default = "https://harbor.lan"
 }

@@ -4,7 +4,7 @@ resource "helm_release" "metallb_load_balancer" {
   version    = "0.15.2"
   repository = "https://metallb.github.io/metallb"
   namespace  = kubernetes_namespace_v1.metallb_system.id
-  timeout    = 60
+  timeout    = 120
 }
 
 resource "helm_release" "metallb_load_balancer_config" {
@@ -19,21 +19,21 @@ resource "helm_release" "metallb_load_balancer_config" {
 
 resource "helm_release" "step_certificates" {
   depends_on = [
-    kubernetes_secret_v1.docker_hub_namespace_security
+    kubernetes_secret_v1.docker_hub_namespace_security,
+    kubernetes_persistent_volume_v1.local_small_1,
   ]
   name       = "step-certificates"
   chart      = "step-certificates"
-  version    = "1.28.2"
+  version    = "1.28.3"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 120
   values = [
+    templatefile("${path.module}/step_certificates_config/config.yaml", {
+      root_ca_password = base64encode(var.root_ca_password)
+    }),
     templatefile("${path.module}/helm_values/step-certificates.yaml", {
-      root_ca_password            = base64encode(var.root_ca_password)
-      root_ca_certificate         = var.root_ca_certificate
-      root_ca_key                 = var.root_ca_key
-      intermediate_ca_certificate = var.intermediate_ca_certificate
-      intermediate_ca_key         = var.intermediate_ca_key
+      root_ca_password = base64encode(var.root_ca_password)
     })
   ]
 }
@@ -105,8 +105,6 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
-
-
 resource "helm_release" "nginx_ingress_controller" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_ingress,
@@ -132,14 +130,10 @@ resource "helm_release" "harbor" {
     kubernetes_secret_v1.docker_hub_namespace_applications,
     kubernetes_storage_class_v1.local,
     kubernetes_persistent_volume_v1.local_large_1,
-    kubernetes_persistent_volume_v1.local_medium_1,
-    kubernetes_persistent_volume_v1.local_medium_2,
-    kubernetes_persistent_volume_v1.local_small_1,
     kubernetes_persistent_volume_v1.local_small_2,
     kubernetes_persistent_volume_v1.local_small_3,
     kubernetes_persistent_volume_v1.local_small_4,
     kubernetes_persistent_volume_v1.local_small_5,
-    kubernetes_persistent_volume_v1.local_small_6,
     helm_release.nginx_ingress_controller,
   ]
   name       = "harbor"
