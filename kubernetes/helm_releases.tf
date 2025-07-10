@@ -29,9 +29,7 @@ resource "helm_release" "step_certificates" {
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 120
   values = [
-    templatefile("${path.module}/step_certificates_config/config.yaml", {
-      root_ca_password = base64encode(var.root_ca_password)
-    }),
+    file("${path.module}/step_certificates_config/config.yaml"),
     templatefile("${path.module}/helm_values/step-certificates.yaml", {
       root_ca_password = base64encode(var.root_ca_password)
     })
@@ -63,7 +61,7 @@ resource "helm_release" "step_issuer" {
   ]
   name       = "step-issuer"
   chart      = "step-issuer"
-  version    = "1.9.7"
+  version    = "1.9.8"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 120
