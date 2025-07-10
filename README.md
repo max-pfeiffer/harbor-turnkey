@@ -23,7 +23,21 @@ $ tofu apply
 ```
 
 ### Install Harbor and all other Applications
-Same here: Go to `kubernetes` subdirectory and create a `credentials.auto.tfvars` file using the example:
+For bootstrapping the CA [install the step cli tool](https://smallstep.com/docs/step-cli/installation/) on your machine. Then generate your `config.yaml`:
+```shell
+$ cd kubernetes/step_certificates_config
+step ca init --helm > config.yaml
+```
+This will result in some interactive process where you need to enter the following configuration options:
+
+1. Deployment Type: you want to select `Standalone` here
+2. Name of the PKI: `Harbor`
+3. DNS names: `step-certificates.security.svc.cluster.local`
+4. IP and port: `:9000`
+5. First provisioner name: `cert-manager`
+6. Password: generate one and capture it, this needs to go into `credentials.auto.tfvars` as `root_ca_password`
+
+Go to `kubernetes` subdirectory and create a `credentials.auto.tfvars` file using the example:
 ```shell
 $ cp credentials.auto.tfvars.example credentials.auto.tfvars 
 ```
