@@ -42,7 +42,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
     slot    = "virtio1"
     type    = "disk"
     storage = "samsung-ssd"
-    size    = "250G"
+    size    = "225G"
     discard = true
   }
 

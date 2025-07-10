@@ -30,7 +30,7 @@ provider "helm" {
 }
 
 provider "harbor" {
-  url = var.harbor_url
+  url      = var.harbor_url
   username = "admin"
   password = var.harbor_admin_password
   insecure = true
