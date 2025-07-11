@@ -1,3 +1,13 @@
+variable "kubernetes_config_path" {
+  type      = string
+  sensitive = true
+}
+
+variable "Kubernetes_config_context" {
+  type      = string
+  sensitive = true
+}
+
 variable "harbor_admin_password" {
   type      = string
   sensitive = true
@@ -14,6 +24,16 @@ variable "docker_hub_password" {
 }
 
 variable "docker_hub_email" {
+  type      = string
+  sensitive = true
+}
+
+variable "github_username" {
+  type      = string
+  sensitive = true
+}
+
+variable "github_password" {
   type      = string
   sensitive = true
 }
