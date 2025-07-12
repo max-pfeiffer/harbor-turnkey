@@ -13,6 +13,14 @@ variable "harbor_admin_password" {
   sensitive = true
 }
 
+variable "harbor_domain" {
+  type    = string
+}
+
+variable "harbor_url" {
+  type    = string
+}
+
 variable "docker_hub_username" {
   type      = string
   sensitive = true
@@ -45,9 +53,4 @@ variable "metallb_ip_address_range" {
 variable "root_ca_password" {
   type      = string
   sensitive = true
-}
-
-variable "harbor_url" {
-  type    = string
-  default = "https://harbor.lan"
 }

@@ -1,14 +1,20 @@
+# Kubernetes and Helm Provider
+kubernetes_config_path = "~/.kube/harbor-config"
+Kubernetes_config_context = "admin@harbor"
+
 # Harbor
-harbor_admin_password =
+harbor_admin_password = "supersecretpassword"
+harbor_domain = "harbor.local"
+harbor_url = "https://harbor.local"
 
 # Docker Hub
-docker_hub_username =
-docker_hub_password =
-docker_hub_email    =
+docker_hub_username = "your-user-name"
+docker_hub_password = "your-access-token"
+docker_hub_email    = "me@example.com"
 
 # GitHub
-github_username =
-github_password =
+github_username = "your-user-name"
+github_password = "your-access-token"
 
 # MetalLB
 metallb_ip_address_range = "192.168.1.18-192.168.1.19"

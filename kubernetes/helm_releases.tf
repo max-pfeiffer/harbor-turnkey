@@ -147,6 +147,8 @@ resource "helm_release" "harbor" {
   timeout    = 120
   values = [
     templatefile("${path.module}/helm_values/harbor.yaml", {
+      harbor_domain = var.harbor_domain,
+      harbor_url = var.harbor_url
     })
   ]
 }
