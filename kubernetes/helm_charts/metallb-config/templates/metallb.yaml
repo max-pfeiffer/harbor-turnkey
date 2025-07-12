@@ -3,8 +3,7 @@ kind: IPAddressPool
 metadata:
   name: public
 spec:
-  addresses:
-  - 192.168.20.2-192.168.20.3
+  addresses: {{ .Values.ipAddressPool.addresses }}
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

@@ -15,6 +15,12 @@ resource "helm_release" "metallb_load_balancer_config" {
   chart     = "${path.module}/helm_charts/metallb-config"
   namespace = kubernetes_namespace_v1.metallb_system.id
   timeout   = 60
+  set = [
+    {
+      name  = "ipAddressPool.addresses"
+      value = [var.metallb_ip_address_range]
+    },
+  ]
 }
 
 resource "helm_release" "step_certificates" {
@@ -120,7 +126,6 @@ resource "helm_release" "nginx_ingress_controller" {
       value = "docker-hub"
     },
   ]
-
 }
 
 resource "helm_release" "harbor" {

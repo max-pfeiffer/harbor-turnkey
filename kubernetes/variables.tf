@@ -38,6 +38,10 @@ variable "github_password" {
   sensitive = true
 }
 
+variable "metallb_ip_address_range" {
+  type      = string
+}
+
 variable "root_ca_password" {
   type      = string
   sensitive = true
