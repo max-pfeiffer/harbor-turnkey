@@ -1,6 +1,7 @@
 # Harbor on a Kubernetes Single Node Cluster using Talos Linux and Proxmox VE
 This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
-It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and Proxmox as hypervisor.
+It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and
+[Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) as hypervisor.
 The provisioning is done with [OpenTofu](https://opentofu.org/).
 
 It's meant to be a turn-key solution: so after installing, you will have Harbor available and ready to use immediately.
@@ -82,6 +83,12 @@ with Step CLI:
 ```shell
 $ step certificate install root-ca.pem
 ```
+
+### Configure Kubernetes Cluster with the new Harbor Image Cache
+The objective is to have Harbor available as container image cache eventually. So the last step is to configure
+the image cache for your Kubernetes nodes. As this is specific to the container runtime and registry you are using, I
+need to exclude it here. For those using Talos Linux for running their cluster, [this is straight forward and
+well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-through-cache/#using-harbor-as-a-caching-registry).
 
 ## Information Sources
 * [Talos Linux documentation](https://www.talos.dev/v1.8/)
