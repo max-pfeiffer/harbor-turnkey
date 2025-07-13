@@ -16,6 +16,10 @@ variable "proxmox_target_node" {
   type = string
 }
 
+variable "proxmox_storage_device" {
+  type = string
+}
+
 variable "cluster_name" {
   description = "A name to provide for the Talos cluster"
   type        = string

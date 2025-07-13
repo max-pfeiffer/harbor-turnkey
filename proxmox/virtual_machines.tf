@@ -21,7 +21,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   disk {
     slot    = "ide0"
     type    = "cloudinit"
-    storage = "samsung-ssd"
+    storage = var.proxmox_storage_device
   }
 
   disk {
@@ -33,7 +33,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   disk {
     slot    = "virtio0"
     type    = "disk"
-    storage = "samsung-ssd"
+    storage = var.proxmox_storage_device
     size    = "50G"
     discard = true
   }
@@ -41,7 +41,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   disk {
     slot    = "virtio1"
     type    = "disk"
-    storage = "samsung-ssd"
+    storage = var.proxmox_storage_device
     size    = "225G"
     discard = true
   }
