@@ -18,7 +18,7 @@ resource "helm_release" "metallb_load_balancer_config" {
   set = [
     {
       name  = "ipAddressPool.addresses"
-      value = [var.metallb_ip_address_range]
+      value = "[${var.metallb_ip_address_range}]"
     },
   ]
 }
