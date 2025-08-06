@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/random"
       version = "3.7.2"
     }
+    local = {
+      source = "hashicorp/local"
+      version = "2.5.3"
+    }
     harbor = {
       source  = "goharbor/harbor"
       version = "3.10.21"
