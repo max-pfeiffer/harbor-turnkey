@@ -2,35 +2,27 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.37.1"
+      version = "2.38.0"
     }
     helm = {
       source  = "hashicorp/helm"
       version = "3.0.2"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.7.2"
-    }
-    local = {
-      source = "hashicorp/local"
-      version = "2.5.3"
-    }
     harbor = {
       source  = "goharbor/harbor"
-      version = "3.10.21"
+      version = "3.10.23"
     }
   }
 }
 
 provider "kubernetes" {
-  config_path = var.kubernetes_config_path
+  config_path    = var.kubernetes_config_path
   config_context = var.Kubernetes_config_context
 }
 
 provider "helm" {
   kubernetes = {
-    config_path = var.kubernetes_config_path
+    config_path    = var.kubernetes_config_path
     config_context = var.Kubernetes_config_context
   }
 }

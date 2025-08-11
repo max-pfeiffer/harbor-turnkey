@@ -53,5 +53,5 @@ variable "domain_name_server" {
 variable "vlan_tag" {
   description = "Vlan tag for all nodes, default does not configure a Vlan"
   type        = number
-  default = 0
+  default     = 0
 }

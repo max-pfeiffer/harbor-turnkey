@@ -49,21 +49,19 @@ In the next step you will need to reference this kubeconfig file in your `config
 `kubernetes` module.
 
 ### Configure Kubernetes Cluster and Install Applications
-For bootstrapping the CA [install the step cli tool](https://smallstep.com/docs/step-cli/installation/) on your machine. Then generate your `config.yaml`:
+For bootstrapping the CA [install the step cli tool](https://smallstep.com/docs/step-cli/installation/) on your machine. Then generate your `bootstrap.yaml`:
 ```shell
-$ cd kubernetes/step_certificates_config
-step ca init --helm > config.yaml
+$ cd kubernetes
+$ ./bootstrap_step_certificates.sh
+Choose a password for your CA keys and first provisioner.
+✔ [leave empty and we'll generate one]: 
 ```
-This will result in some interactive process where you need to enter the following configuration options:
+This will result in an interactive process where you need to enter the password used for root CA and provisioner
+Generate and capture the password, this needs to go into `configuration.auto.tfvars` as `root_ca_password`. The script
+uses the step cli tool to generate the file `kubernetes/helm_values/step-certificates-bootstrap.yaml` which is used to
+bootstrap the Step CA in the cluster.
 
-1. Deployment Type: `Standalone`
-2. Name of the PKI: `Harbor`
-3. DNS names: `step-certificates.security.svc.cluster.local`
-4. IP and port: `:9000`
-5. First provisioner name: `cert-manager`
-6. Password: generate and capture it, this needs to go into `configuration.auto.tfvars` as `root_ca_password`
-
-Go to `kubernetes` subdirectory and create a `configuration.auto.tfvars` file using the example:
+In `kubernetes` subdirectory create a `configuration.auto.tfvars` file using the example:
 ```shell
 $ cp configuration.auto.tfvars.example configuration.auto.tfvars 
 ```
@@ -76,18 +74,20 @@ $ tofu plan
 $ tofu apply
 ```
 After everything was provisioned with OpenTofu, [Harbor](https://goharbor.io/) is available locally under the IP
-address and domain which you configured earlier.
+address and domain which you configured earlier. You can now log in with username `admin` and your
+`harbor_admin_password` which you specified in `configuration.auto.tfvars`.
 
 You might want to add a DNS entry for it and add the root CA to your local trust store. You can do this conveniently
 with Step CLI:
 ```shell
-$ step certificate install root-ca.pem
+$ tofu output -raw root_ca_crt > root_ca.crt
+$ step certificate install root-ca.crt
 ```
 
 ### Configure Kubernetes Cluster with the new Harbor Image Cache
 The objective is to have Harbor available as container image cache eventually. So the last step is to configure
 the image cache for your Kubernetes nodes. As this is specific to the container runtime and registry you are using, I
-need to exclude it here. For those using Talos Linux for running their cluster, [this is straight forward and
+need to exclude instructions here. For those using Talos Linux for running their cluster, [this is straight forward and
 well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-through-cache/#using-harbor-as-a-caching-registry).
 
 ## Information Sources
