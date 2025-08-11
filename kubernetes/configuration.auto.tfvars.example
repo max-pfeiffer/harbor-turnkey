@@ -12,7 +12,7 @@ docker_hub_username = "your-user-name"
 docker_hub_password = "your-access-token"
 docker_hub_email    = "me@example.com"
 
-# GitHub
+# GitHub, optional, if you do not specify one of the variables the GitHub registry cache will not be created
 github_username = "your-user-name"
 github_password = "your-access-token"
 

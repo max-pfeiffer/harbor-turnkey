@@ -39,11 +39,13 @@ variable "docker_hub_email" {
 variable "github_username" {
   type      = string
   sensitive = true
+  default = null
 }
 
 variable "github_password" {
   type      = string
   sensitive = true
+  default = null
 }
 
 variable "metallb_ip_address_range" {
