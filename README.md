@@ -1,4 +1,4 @@
-# Harbor on a Kubernetes Single Node Cluster using Talos Linux and Proxmox VE
+# Harbor Turn Key
 This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
 It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and
 [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) as hypervisor.
@@ -19,9 +19,11 @@ For making this happen, I had to do some design decisions:
   ephemeral, as the container images can be easily pulled or reproduced again. 
  
 ## Prerequisites
-* Proxmox VE with some resources available (default: 2 CPUs, 8GB RAM, 275GB disk space)
+* [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) with some resources available
+  (default: 2 CPUs, 8GB RAM, 275GB disk space)
 * [OpenTofu installed locally](https://opentofu.org/docs/intro/install/)
 * [Step CLI installed locally](https://smallstep.com/docs/step-cli/installation/)
+* Docker Hub account
 
 ## Usage
 First clone the repo. The provisioning with [OpenTofu](https://opentofu.org/) needs to be done in two steps:

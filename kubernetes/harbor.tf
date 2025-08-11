@@ -8,6 +8,7 @@ resource "harbor_registry" "docker_hub" {
 }
 
 resource "harbor_registry" "github" {
+  count = var.github_username != null && var.github_password != null ? 1 : 0
   depends_on    = [helm_release.harbor]
   provider_name = "github"
   name          = "GitHub"
@@ -23,7 +24,8 @@ resource "harbor_project" "docker_hub" {
 }
 
 resource "harbor_project" "github" {
+  count = var.github_username != null && var.github_password != null ? 1 : 0
   name        = "github-cache"
   public      = true
-  registry_id = harbor_registry.github.registry_id
+  registry_id = harbor_registry.github[count.index].registry_id
 }
