@@ -1,11 +1,11 @@
-# Harbor Turn Key
+# Harbor Turnkey
 This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
 It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and
 [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) as hypervisor.
 The provisioning is done with [OpenTofu](https://opentofu.org/).
 
-It's meant to be a turn-key solution: so after installing, you will have Harbor available and ready to use immediately.
-For making this happen, I had to do some design decisions:
+It's meant to be a standalone, turnkey solution: so after installing, you will have Harbor available and ready to use
+immediately. For making this happen, I had to do some design decisions:
 * IaC: every piece of infrastructure is declarative
   * Proxmox VE: installation of this hypervisor itself is a manual task, but everything else can be done fully
     declarative using APIs and a Terraform/OpenTofu provider 
@@ -16,7 +16,8 @@ For making this happen, I had to do some design decisions:
   provision the volumes on the node with Talos Linux and configured
   [local PersistentVolumes](https://kubernetes.io/docs/concepts/storage/volumes/#local).
   This way it can be installed and run anywhere. Plus, I consider the data which will be stored here as
-  ephemeral, as the container images can be easily pulled or reproduced again. 
+  ephemeral, as the container images can be easily pulled or reproduced again.
+* Certificate authority (CA): bootstrapping and running a standalone CA is necessary to issue TLS certificates 
  
 ## Prerequisites
 * [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) with some resources available
