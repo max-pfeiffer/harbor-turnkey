@@ -14,11 +14,11 @@ variable "harbor_admin_password" {
 }
 
 variable "harbor_domain" {
-  type    = string
+  type = string
 }
 
 variable "harbor_url" {
-  type    = string
+  type = string
 }
 
 variable "docker_hub_username" {
@@ -47,7 +47,7 @@ variable "github_password" {
 }
 
 variable "metallb_ip_address_range" {
-  type      = string
+  type = string
 }
 
 variable "root_ca_password" {

@@ -66,7 +66,6 @@ resource "kubernetes_secret_v1" "docker_hub_namespace_applications" {
   }
 }
 
-
 resource "kubernetes_secret_v1" "harbor" {
   metadata {
     namespace = kubernetes_namespace_v1.applications.id

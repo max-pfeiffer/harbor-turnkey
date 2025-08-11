@@ -38,6 +38,3 @@ terraform.rc
 
 # PyCharm
 .idea
-
-# Credentials
-kubernetes/step_certificates_config/config.yaml

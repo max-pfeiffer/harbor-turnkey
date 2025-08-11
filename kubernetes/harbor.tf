@@ -17,13 +17,13 @@ resource "harbor_registry" "github" {
 }
 
 resource "harbor_project" "docker_hub" {
-  name                        = "docker-hub-cache"
-  public                      = true
+  name        = "docker-hub-cache"
+  public      = true
   registry_id = harbor_registry.docker_hub.registry_id
 }
 
 resource "harbor_project" "github" {
-  name                        = "github-cache"
-  public                      = true
+  name        = "github-cache"
+  public      = true
   registry_id = harbor_registry.github.registry_id
 }
