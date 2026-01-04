@@ -1,24 +1,15 @@
-resource "helm_release" "metallb_load_balancer" {
-  name       = "metallb"
-  chart      = "metallb"
-  version    = "0.15.2"
-  repository = "https://metallb.github.io/metallb"
-  namespace  = kubernetes_namespace_v1.metallb_system.id
-  timeout    = 120
-}
-
-resource "helm_release" "metallb_load_balancer_config" {
-  depends_on = [
-    helm_release.metallb_load_balancer,
-  ]
-  name      = "metallb-config"
-  chart     = "${path.module}/helm_charts/metallb-config"
-  namespace = kubernetes_namespace_v1.metallb_system.id
-  timeout   = 60
+resource "helm_release" "cilium_lb_config" {
+  name       = "cilium-lb-config"
+  chart      = "${path.module}/helm_charts/cilium-lb-config"
+  timeout    = 60
   set = [
     {
-      name  = "ipAddressPool.addresses"
-      value = "[${var.metallb_ip_address_range}]"
+      name  = "ciliumLoadBalancerIpRange.start"
+      value = var.cilium_load_balancer_ip_range_start
+    },
+    {
+      name  = "ciliumLoadBalancerIpRange.stop"
+      value = var.cilium_load_balancer_ip_range_stop
     },
   ]
 }
@@ -30,7 +21,7 @@ resource "helm_release" "step_certificates" {
   ]
   name       = "step-certificates"
   chart      = "step-certificates"
-  version    = "1.28.3"
+  version    = "1.29.0"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 120
@@ -42,7 +33,7 @@ resource "helm_release" "step_certificates" {
   ]
 }
 
-data "kubernetes_config_map" "step_certificates_certs" {
+data "kubernetes_config_map_v1" "step_certificates_certs" {
   depends_on = [helm_release.step_certificates]
   metadata {
     name      = "step-certificates-certs"
@@ -50,7 +41,7 @@ data "kubernetes_config_map" "step_certificates_certs" {
   }
 }
 
-data "kubernetes_config_map" "step_certificates_config" {
+data "kubernetes_config_map_v1" "step_certificates_config" {
   depends_on = [helm_release.step_certificates]
   metadata {
     name      = "step-certificates-config"
@@ -62,21 +53,21 @@ resource "helm_release" "step_issuer" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_security,
     helm_release.step_certificates,
-    data.kubernetes_config_map.step_certificates_certs,
-    data.kubernetes_config_map.step_certificates_config
+    data.kubernetes_config_map_v1.step_certificates_certs,
+    data.kubernetes_config_map_v1.step_certificates_config
   ]
   name       = "step-issuer"
   chart      = "step-issuer"
-  version    = "1.9.8"
+  version    = "1.9.11"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 120
   values = [
     templatefile("${path.module}/helm_values/step-issuer.yaml", {
-      ca_url                            = jsondecode(data.kubernetes_config_map.step_certificates_config.data["defaults.json"]).ca-url
-      ca_bundle                         = base64encode(data.kubernetes_config_map.step_certificates_certs.data["root_ca.crt"])
-      provisioner_name                  = jsondecode(data.kubernetes_config_map.step_certificates_config.data["ca.json"]).authority.provisioners[0].name
-      provisioner_kid                   = jsondecode(data.kubernetes_config_map.step_certificates_config.data["ca.json"]).authority.provisioners[0].key.kid
+      ca_url                            = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["defaults.json"]).ca-url
+      ca_bundle                         = base64encode(data.kubernetes_config_map_v1.step_certificates_certs.data["root_ca.crt"])
+      provisioner_name                  = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["ca.json"]).authority.provisioners[0].name
+      provisioner_kid                   = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["ca.json"]).authority.provisioners[0].key.kid
       provisioner_passwordref_name      = "step-certificates-provisioner-password"
       provisioner_passwordref_key       = "password"
       provisioner_passwordref_namespace = kubernetes_namespace_v1.security.id
@@ -92,7 +83,7 @@ resource "helm_release" "cert_manager" {
   ]
   name       = "cert-manager"
   chart      = "cert-manager"
-  version    = "1.17.1"
+  version    = "1.19.2"
   repository = "https://charts.jetstack.io"
   namespace  = kubernetes_namespace_v1.cert_manager.id
   timeout    = 120
@@ -109,25 +100,6 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
-resource "helm_release" "nginx_ingress_controller" {
-  depends_on = [
-    kubernetes_secret_v1.docker_hub_namespace_ingress,
-    helm_release.metallb_load_balancer_config,
-  ]
-  name       = "ingress-nginx"
-  chart      = "ingress-nginx"
-  version    = "4.12.3"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  namespace  = kubernetes_namespace_v1.ingress.id
-  timeout    = 60
-  set = [
-    {
-      name  = "imagePullSecrets[0].name"
-      value = "docker-hub"
-    },
-  ]
-}
-
 resource "helm_release" "harbor" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_applications,
@@ -137,11 +109,11 @@ resource "helm_release" "harbor" {
     kubernetes_persistent_volume_v1.local_small_3,
     kubernetes_persistent_volume_v1.local_small_4,
     kubernetes_persistent_volume_v1.local_small_5,
-    helm_release.nginx_ingress_controller,
+    helm_release.cilium_lb_config,
   ]
   name       = "harbor"
   chart      = "harbor"
-  version    = "1.17.1"
+  version    = "1.18.1"
   repository = "https://helm.goharbor.io"
   namespace  = kubernetes_namespace_v1.applications.id
   timeout    = 120

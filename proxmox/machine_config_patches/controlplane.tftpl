@@ -1,9 +1,14 @@
 machine:
+  features:
+    hostDNS:
+      forwardKubeDNSToHost: false
   install:
     disk: ${install_disk}
     image: ${install_image}
   network:
     hostname: ${hostname}
+    nameservers:
+      - ${dns}
     interfaces:
       - deviceSelector:
           physical: true
@@ -17,3 +22,12 @@ machine:
         $patch: delete # allow loadbalancer l2 advertisement on the controlplane
 cluster:
   allowSchedulingOnControlPlanes: true
+  proxy:
+    disabled: true
+  network:
+    cni:
+      name: none
+  inlineManifests:
+    - name: cilium
+      contents: |
+        ${indent(8, cilium_manifest)}

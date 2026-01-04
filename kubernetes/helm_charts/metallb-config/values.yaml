@@ -1,3 +1,0 @@
-# Public IP Address Range for IPAddressPool CRD
-ipAddressPool:
-  addresses: []

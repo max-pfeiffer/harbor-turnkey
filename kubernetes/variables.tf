@@ -48,7 +48,11 @@ variable "github_password" {
   default = null
 }
 
-variable "metallb_ip_address_range" {
+variable "cilium_load_balancer_ip_range_start" {
+  type = string
+}
+
+variable "cilium_load_balancer_ip_range_stop" {
   type = string
 }
 

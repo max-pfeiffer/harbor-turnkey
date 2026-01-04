@@ -16,8 +16,9 @@ docker_hub_email    = "me@example.com"
 github_username = "your-user-name"
 github_password = "your-access-token"
 
-# MetalLB
-metallb_ip_address_range = "192.168.1.18-192.168.1.19"
+# Cilium Load Balancer
+cilium_load_balancer_ip_range_start = "192.168.1.17"
+cilium_load_balancer_ip_range_stop  = "192.168.1.19"
 
 # CA
 root_ca_password = "oQzf9dD6uDZmgnAV45hEHHtg0jG6L488"
