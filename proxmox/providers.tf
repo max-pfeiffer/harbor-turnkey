@@ -1,16 +1,12 @@
 terraform {
   required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "2.5.3"
-    }
     proxmox = {
       source  = "telmate/proxmox"
-      version = "3.0.2-rc03"
+      version = "3.0.2-rc07"
     }
     talos = {
       source  = "siderolabs/talos"
-      version = "0.8.1"
+      version = "0.10.0"
     }
   }
 }

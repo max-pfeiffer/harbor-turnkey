@@ -7,7 +7,7 @@ expose:
   ingress:
     hosts:
       core: ${harbor_domain}
-    className: nginx
+    className: cilium
     annotations:
       cert-manager.io/issuer: step-issuer
       cert-manager.io/issuer-group: certmanager.step.sm

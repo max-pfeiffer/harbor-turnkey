@@ -7,7 +7,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   vm_state    = "running"
   memory      = 8192
   boot        = "order=virtio0;ide2"
-  onboot      = true
+  start_at_node_boot      = true
   nameserver  = var.domain_name_server
 
   cpu {
@@ -27,7 +27,7 @@ resource "proxmox_vm_qemu" "kubernetes_control_plane" {
   disk {
     slot = "ide2"
     type = "cdrom"
-    iso  = "local:iso/${local.talos_linux_iso_image_filename}"
+    iso  = "local:iso/${var.talos_linux_iso_image_filename}"
   }
 
   disk {

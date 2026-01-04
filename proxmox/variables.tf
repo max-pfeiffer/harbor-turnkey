@@ -20,6 +20,28 @@ variable "proxmox_storage_device" {
   type = string
 }
 
+variable "talos_version" {
+  type    = string
+  default = "1.11.6"
+}
+
+variable "kubernetes_version" {
+  type    = string
+  default = "1.34.2"
+}
+
+variable "talos_linux_iso_image_url" {
+  description = "URL of the Talos ISO image for initially booting the VM"
+  type        = string
+  default     = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/v1.11.6/nocloud-amd64.iso"
+}
+
+variable "talos_linux_iso_image_filename" {
+  description = "Filename of the Talos ISO image for initially booting the VM"
+  type        = string
+  default     = "talos-linux-v1.11.6-qemu-guest-agent-amd64.iso"
+}
+
 variable "cluster_name" {
   description = "A name to provide for the Talos cluster"
   type        = string

@@ -6,11 +6,18 @@ proxmox_target_node = "your-proxmox-node"
 proxmox_storage_device = "your-device"
 
 # Talos Linux
+# Talos version needs to correspond to the install_image version in node_data
+# See: https://github.com/siderolabs/terraform-provider-talos/blob/main/docs/data-sources/machine_configuration.md
+talos_version                  = "1.11.6"
+kubernetes_version             = "1.34.2"
+# With these variables you can configure the ISO images which are uploaded to Proxmox for initially booting the VMs
+talos_linux_iso_image_url = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/v1.11.6/nocloud-amd64.iso"
+talos_linux_iso_image_filename = "talos-linux-v1.11.6-qemu-guest-agent-amd64.iso"
 cluster_name = "harbor"
 node_data = {
     ip_address    = "192.168.1.20"
     install_disk  = "/dev/vda"
-    install_image = "factory.talos.dev/nocloud-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.10.5"
+    install_image = "factory.talos.dev/nocloud-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.11.6"
     hostname      = "kubernetes-harbor"
   }
 network = "192.168.1.0/24"

@@ -106,7 +106,6 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
   * Applications
     * [terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor)
 * Helm charts:
-  * [metallb](https://github.com/metallb/metallb/tree/main/charts/metallb) 
   * Certificate Authority
     * [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates)
     * [step-issuer](https://artifacthub.io/packages/helm/smallstep/step-issuer)
