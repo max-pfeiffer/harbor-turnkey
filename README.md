@@ -4,6 +4,18 @@ It uses [Talos Linux](https://www.talos.dev/) as an operating system for running
 [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview) as hypervisor.
 The provisioning is done with [OpenTofu](https://opentofu.org/).
 
+Kubernetes cluster features:
+* Kubernetes v1.34.2
+* no kube-proxy
+* [Cilium v1.18.3](https://cilium.io/) as Container Network Interface (CNI) 
+  * without kube-proxy
+  * with [L2 loadbalancer support](https://docs.cilium.io/en/stable/network/l2-announcements/)
+  * with [Ingress controller support](https://docs.cilium.io/en/stable/network/servicemesh/ingress/)
+  * with [Egress gateway support](https://docs.cilium.io/en/stable/network/egress-gateway/egress-gateway/)
+
+This Kubernetes cluster is meant to be used in a test or home lab environment.
+
+## Considerations
 It's meant to be a standalone, turnkey solution: so after installing, you will have Harbor available and ready to use
 immediately. For making this happen, I had to do some design decisions:
 * IaC: every piece of infrastructure is declarative
@@ -110,5 +122,4 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
     * [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates)
     * [step-issuer](https://artifacthub.io/packages/helm/smallstep/step-issuer)
   * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
-  * [ingress-nginx](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
   * [Harbor](https://github.com/goharbor/harbor-helm)
