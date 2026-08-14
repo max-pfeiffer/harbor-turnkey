@@ -57,7 +57,7 @@ variable "node_data" {
     ip_address    = string
     install_disk  = string
     install_image = string
-    hostname      = string
+    hostname      = optional(string)
   })
 }
 
