@@ -1,59 +1,72 @@
-resource "proxmox_vm_qemu" "kubernetes_control_plane" {
-  depends_on  = [proxmox_storage_iso.talos_linux_iso_image]
+resource "proxmox_virtual_environment_vm" "kubernetes_control_plane" {
   name        = var.node_data.hostname
   description = "Kubernetes Control Plane"
-  target_node = var.proxmox_target_node
-  agent       = 1
-  vm_state    = "running"
-  memory      = 8192
-  boot        = "order=virtio0;ide2"
-  start_at_node_boot      = true
-  nameserver  = var.domain_name_server
+  node_name   = var.proxmox_target_node
+  started     = true
+  on_boot     = true
+  boot_order  = ["virtio0", "ide2"]
+
+  agent {
+    enabled = true
+  }
+
+  operating_system {
+    type = "l26"
+  }
 
   cpu {
     cores = 2
+    type  = "host"
+  }
+
+  memory {
+    dedicated = 8192
   }
 
   vga {
     type = "std"
   }
 
-  disk {
-    slot    = "ide0"
-    type    = "cloudinit"
-    storage = var.proxmox_storage_device
+
+  cdrom {
+    interface = "ide2"
+    file_id   = proxmox_download_file.talos_linux_iso_image.id
   }
 
   disk {
-    slot = "ide2"
-    type = "cdrom"
-    iso  = "local:iso/${var.talos_linux_iso_image_filename}"
+    interface    = "virtio0"
+    datastore_id = var.proxmox_storage_device
+    size         = 50
+    discard      = "on"
   }
 
   disk {
-    slot    = "virtio0"
-    type    = "disk"
-    storage = var.proxmox_storage_device
-    size    = "50G"
-    discard = true
+    interface    = "virtio1"
+    datastore_id = var.proxmox_storage_device
+    size         = 225
+    discard      = "on"
   }
 
-  disk {
-    slot    = "virtio1"
-    type    = "disk"
-    storage = var.proxmox_storage_device
-    size    = "225G"
-    discard = true
-  }
-
-  network {
-    id     = 0
-    model  = "virtio"
-    bridge = "vmbr0"
-    tag    = var.vlan_tag
+  network_device {
+    model   = "virtio"
+    bridge  = "vmbr0"
+    vlan_id = var.vlan_tag
   }
 
   # Cloud init setup
-  os_type   = "cloud-init"
-  ipconfig0 = "ip=${var.node_data.ip_address}/24,gw=${var.network_gateway}"
+  initialization {
+    interface    = "ide0"
+    datastore_id = var.proxmox_storage_device
+
+    dns {
+      servers = [var.domain_name_server]
+    }
+
+    ip_config {
+      ipv4 {
+        address = "${var.node_data.ip_address}/24"
+        gateway = var.network_gateway
+      }
+    }
+  }
 }
