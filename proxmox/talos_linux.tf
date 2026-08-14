@@ -1,10 +1,10 @@
 resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "controlplane" {
-  cluster_name     = var.cluster_name
-  cluster_endpoint = "https://${var.node_data.ip_address}:6443"
-  machine_type     = "controlplane"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = "https://${var.node_data.ip_address}:6443"
+  machine_type       = "controlplane"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
 }
@@ -16,7 +16,7 @@ data "talos_client_configuration" "this" {
 }
 
 resource "talos_machine_configuration_apply" "controlplane" {
-  depends_on                  = [proxmox_vm_qemu.kubernetes_control_plane]
+  depends_on                  = [proxmox_virtual_environment_vm.kubernetes_control_plane]
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controlplane.machine_configuration
   node                        = var.node_data.ip_address
@@ -25,11 +25,11 @@ resource "talos_machine_configuration_apply" "controlplane" {
       hostname        = var.node_data.hostname
       install_disk    = var.node_data.install_disk
       install_image   = var.node_data.install_image
-      dns                         = var.domain_name_server
+      dns             = var.domain_name_server
       ip_address      = "${var.node_data.ip_address}/24"
       network         = var.network
       network_gateway = var.network_gateway
-      cilium_manifest             = data.helm_template.cilium.manifest
+      cilium_manifest = data.helm_template.cilium.manifest
     }),
     file("${path.module}/machine_config_patches/uservolumes.yaml"),
   ]

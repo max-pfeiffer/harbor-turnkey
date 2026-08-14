@@ -110,7 +110,7 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
 * [Talos Linux Image Factory](https://factory.talos.dev/)
 * Terraform providers/modules
   * Baremetal provisioning
-    * [terraform-provider-proxmox](https://github.com/Telmate/terraform-provider-proxmox)
+    * [terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox)
     * [terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos)
   * Kubernetes
     * [terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes)
