@@ -39,13 +39,13 @@ variable "docker_hub_email" {
 variable "github_username" {
   type      = string
   sensitive = true
-  default = null
+  default   = null
 }
 
 variable "github_password" {
   type      = string
   sensitive = true
-  default = null
+  default   = null
 }
 
 variable "cilium_load_balancer_ip_range_start" {

@@ -1,7 +1,7 @@
 resource "helm_release" "cilium_lb_config" {
-  name       = "cilium-lb-config"
-  chart      = "${path.module}/helm_charts/cilium-lb-config"
-  timeout    = 60
+  name    = "cilium-lb-config"
+  chart   = "${path.module}/helm_charts/cilium-lb-config"
+  timeout = 60
   set = [
     {
       name  = "ciliumLoadBalancerIpRange.start"
