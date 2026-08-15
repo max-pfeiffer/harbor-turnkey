@@ -5,9 +5,9 @@ It uses [Talos Linux](https://www.talos.dev/) as an operating system for running
 The provisioning is done with [OpenTofu](https://opentofu.org/).
 
 Kubernetes cluster features:
-* Kubernetes v1.34.2
+* Kubernetes v1.36.3
 * no kube-proxy
-* [Cilium v1.18.3](https://cilium.io/) as Container Network Interface (CNI) 
+* [Cilium v1.20.0](https://cilium.io/) as Container Network Interface (CNI) 
   * without kube-proxy
   * with [L2 loadbalancer support](https://docs.cilium.io/en/stable/network/l2-announcements/)
   * with [Ingress controller support](https://docs.cilium.io/en/stable/network/servicemesh/ingress/)
