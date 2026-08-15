@@ -123,3 +123,4 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
     * [step-issuer](https://artifacthub.io/packages/helm/smallstep/step-issuer)
   * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
   * [Harbor](https://github.com/goharbor/harbor-helm)
+  * [Cilium](https://artifacthub.io/packages/helm/cilium/cilium)
