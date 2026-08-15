@@ -5,9 +5,9 @@ It uses [Talos Linux](https://www.talos.dev/) as an operating system for running
 The provisioning is done with [OpenTofu](https://opentofu.org/).
 
 Kubernetes cluster features:
-* Kubernetes v1.34.2
+* Kubernetes v1.36.3
 * no kube-proxy
-* [Cilium v1.18.3](https://cilium.io/) as Container Network Interface (CNI) 
+* [Cilium v1.20.0](https://cilium.io/) as Container Network Interface (CNI) 
   * without kube-proxy
   * with [L2 loadbalancer support](https://docs.cilium.io/en/stable/network/l2-announcements/)
   * with [Ingress controller support](https://docs.cilium.io/en/stable/network/servicemesh/ingress/)
@@ -123,3 +123,4 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
     * [step-issuer](https://artifacthub.io/packages/helm/smallstep/step-issuer)
   * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
   * [Harbor](https://github.com/goharbor/harbor-helm)
+  * [Cilium](https://artifacthub.io/packages/helm/cilium/cilium)
