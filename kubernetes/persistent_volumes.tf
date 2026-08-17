@@ -21,7 +21,7 @@ resource "kubernetes_persistent_volume_v1" "local_large_1" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }
@@ -52,7 +52,7 @@ resource "kubernetes_persistent_volume_v1" "local_small_1" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }
@@ -83,7 +83,7 @@ resource "kubernetes_persistent_volume_v1" "local_small_2" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }
@@ -114,7 +114,7 @@ resource "kubernetes_persistent_volume_v1" "local_small_3" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }
@@ -145,7 +145,7 @@ resource "kubernetes_persistent_volume_v1" "local_small_4" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }
@@ -176,7 +176,7 @@ resource "kubernetes_persistent_volume_v1" "local_small_5" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values   = ["kubernetes-harbor"]
+            values   = [var.kubernetes_node_name]
           }
         }
       }

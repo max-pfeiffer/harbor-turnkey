@@ -12,6 +12,10 @@ terraform {
       source  = "goharbor/harbor"
       version = "3.12.4"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.1.0"
+    }
   }
 }
 

@@ -1,3 +1,10 @@
+locals {
+  harbor_release_name = "harbor"
+  # Name of the Ingress the Harbor chart creates. ACME HTTP-01 challenge routes are
+  # inserted into it, so it has to be known before the release exists.
+  harbor_ingress_name = "${local.harbor_release_name}-ingress"
+}
+
 resource "helm_release" "cilium_lb_config" {
   name    = "cilium-lb-config"
   chart   = "${path.module}/helm_charts/cilium-lb-config"
@@ -18,59 +25,19 @@ resource "helm_release" "step_certificates" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_security,
     kubernetes_persistent_volume_v1.local_small_1,
+    kubernetes_config_map_v1.step_certificates_certs,
+    kubernetes_config_map_v1.step_certificates_config,
+    kubernetes_secret_v1.step_certificates_secrets,
   ]
-  name       = "step-certificates"
+  name       = local.step_ca_name
   chart      = "step-certificates"
   version    = "1.29.0"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
-  timeout    = 120
+  timeout    = 300
   values = [
-    file("${path.module}/helm_values/step-certificates-bootstrap.yaml"),
     templatefile("${path.module}/helm_values/step-certificates.yaml", {
-      root_ca_password = base64encode(var.root_ca_password)
-    })
-  ]
-}
-
-data "kubernetes_config_map_v1" "step_certificates_certs" {
-  depends_on = [helm_release.step_certificates]
-  metadata {
-    name      = "step-certificates-certs"
-    namespace = "security"
-  }
-}
-
-data "kubernetes_config_map_v1" "step_certificates_config" {
-  depends_on = [helm_release.step_certificates]
-  metadata {
-    name      = "step-certificates-config"
-    namespace = "security"
-  }
-}
-
-resource "helm_release" "step_issuer" {
-  depends_on = [
-    kubernetes_secret_v1.docker_hub_namespace_security,
-    helm_release.step_certificates,
-    data.kubernetes_config_map_v1.step_certificates_certs,
-    data.kubernetes_config_map_v1.step_certificates_config
-  ]
-  name       = "step-issuer"
-  chart      = "step-issuer"
-  version    = "1.9.11"
-  repository = "https://smallstep.github.io/helm-charts/"
-  namespace  = kubernetes_namespace_v1.security.id
-  timeout    = 120
-  values = [
-    templatefile("${path.module}/helm_values/step-issuer.yaml", {
-      ca_url                            = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["defaults.json"]).ca-url
-      ca_bundle                         = base64encode(data.kubernetes_config_map_v1.step_certificates_certs.data["root_ca.crt"])
-      provisioner_name                  = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["ca.json"]).authority.provisioners[0].name
-      provisioner_kid                   = jsondecode(data.kubernetes_config_map_v1.step_certificates_config.data["ca.json"]).authority.provisioners[0].key.kid
-      provisioner_passwordref_name      = "step-certificates-provisioner-password"
-      provisioner_passwordref_key       = "password"
-      provisioner_passwordref_namespace = kubernetes_namespace_v1.security.id
+      ca_material_revision = local.ca_material_revision
     })
   ]
 }
@@ -78,8 +45,6 @@ resource "helm_release" "step_issuer" {
 resource "helm_release" "cert_manager" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_cert_manager,
-    helm_release.step_certificates,
-    helm_release.step_issuer
   ]
   name       = "cert-manager"
   chart      = "cert-manager"
@@ -100,9 +65,32 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
+# The ClusterIssuer lives in a local chart because the cert-manager CRDs it depends on
+# only exist after the cert-manager release, which the kubernetes provider cannot express
+# for custom resources without failing at plan time.
+resource "helm_release" "step_ca_acme_issuer" {
+  depends_on = [
+    helm_release.step_certificates,
+    helm_release.cert_manager,
+  ]
+  name      = "step-ca-acme-issuer"
+  chart     = "${path.module}/helm_charts/step-ca-acme-issuer"
+  namespace = kubernetes_namespace_v1.cert_manager.id
+  timeout   = 60
+  values = [
+    templatefile("${path.module}/helm_values/step-ca-acme-issuer.yaml", {
+      cluster_issuer_name = local.acme_cluster_issuer_name
+      acme_directory_url  = local.step_ca_acme_directory_url
+      ca_bundle           = base64encode(tls_self_signed_cert.root_ca.cert_pem)
+      solver_ingress_name = local.harbor_ingress_name
+    })
+  ]
+}
+
 resource "helm_release" "harbor" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_applications,
+    helm_release.step_ca_acme_issuer,
     kubernetes_storage_class_v1.local,
     kubernetes_persistent_volume_v1.local_large_1,
     kubernetes_persistent_volume_v1.local_small_2,
@@ -111,7 +99,7 @@ resource "helm_release" "harbor" {
     kubernetes_persistent_volume_v1.local_small_5,
     helm_release.cilium_lb_config,
   ]
-  name       = "harbor"
+  name       = local.harbor_release_name
   chart      = "harbor"
   version    = "1.18.1"
   repository = "https://helm.goharbor.io"
@@ -119,8 +107,9 @@ resource "helm_release" "harbor" {
   timeout    = 120
   values = [
     templatefile("${path.module}/helm_values/harbor.yaml", {
-      harbor_domain = var.harbor_domain,
-      harbor_url    = var.harbor_url
+      harbor_domain       = var.harbor_domain,
+      harbor_url          = var.harbor_url,
+      cluster_issuer_name = local.acme_cluster_issuer_name
     })
   ]
 }

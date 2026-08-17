@@ -1,0 +1,5 @@
+clusterIssuer:
+  name: "${cluster_issuer_name}"
+  acmeDirectoryUrl: "${acme_directory_url}"
+  caBundle: "${ca_bundle}"
+  solverIngressName: "${solver_ingress_name}"
