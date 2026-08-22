@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.clusterIssuer.name }}
+spec:
+  acme:
+    server: {{ .Values.clusterIssuer.acmeDirectoryUrl | quote }}
+    caBundle: {{ .Values.clusterIssuer.caBundle | quote }}
+    privateKeySecretRef:
+      name: {{ .Values.clusterIssuer.name }}-account-key
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            # The solver Service is only reached by the Gateway, which runs inside the
+            # cluster, so it does not need to be published on the nodes.
+            serviceType: ClusterIP
+            parentRefs:
+              - group: gateway.networking.k8s.io
+                kind: Gateway
+                name: {{ .Values.clusterIssuer.solverGateway.name | quote }}
+                namespace: {{ .Values.clusterIssuer.solverGateway.namespace | quote }}
+                sectionName: {{ .Values.clusterIssuer.solverGateway.sectionName | quote }}

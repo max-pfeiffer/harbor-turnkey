@@ -15,3 +15,11 @@ resource "kubernetes_namespace_v1" "applications" {
     name = "applications"
   }
 }
+
+# Namespace for the cluster wide networking resources, currently the Gateway every
+# application is published through.
+resource "kubernetes_namespace_v1" "network" {
+  metadata {
+    name = "network"
+  }
+}

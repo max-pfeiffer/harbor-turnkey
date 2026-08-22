@@ -52,15 +52,31 @@ data "helm_template" "cilium" {
       name  = "k8sClientRateLimit.burst"
       value = "100"
     },
-    # Ingress Controller
-    # See: https://docs.cilium.io/en/stable/network/servicemesh/ingress/
+    # Gateway API
+    # See: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
     {
-      name  = "ingressController.enabled"
+      name  = "gatewayAPI.enabled"
       value = "true"
     },
     {
-      name  = "ingressController.loadbalancerMode"
-      value = "dedicated"
+      name  = "gatewayAPI.enableAlpn"
+      value = "true"
+    },
+    {
+      name  = "gatewayAPI.enableAppProtocol"
+      value = "true"
+    },
+    {
+      name  = "gatewayAPI.gatewayClass.create"
+      value = "true"
+      type  = "string"
+    },
+    # Generate Hubble TLS certificates in-cluster with a CronJob instead of at Helm render time,
+    # otherwise every render produces new certificates and the machine config never converges
+    # See: https://docs.cilium.io/en/stable/observability/hubble/configuration/tls/
+    {
+      name  = "hubble.tls.auto.method"
+      value = "cronJob"
     },
     # Egress Gateway
     # See: https://docs.cilium.io/en/stable/network/egress-gateway/egress-gateway/
@@ -71,13 +87,6 @@ data "helm_template" "cilium" {
     {
       name  = "bpf.masquerade"
       value = "true"
-    },
-    # Generate Hubble TLS certificates in-cluster with a CronJob instead of at Helm render time,
-    # otherwise every render produces new certificates and the machine config never converges
-    # See: https://docs.cilium.io/en/stable/observability/hubble/configuration/tls/
-    {
-      name  = "hubble.tls.auto.method"
-      value = "cronJob"
     },
   ]
 }

@@ -1,0 +1,19 @@
+clusterIssuer:
+  # name of the ClusterIssuer that Certificate resources refer to.
+  name: "step-ca"
+  # acmeDirectoryUrl is the ACME directory of the step-ca ACME provisioner.
+  acmeDirectoryUrl: ""
+  # caBundle is the base64 encoded root CA certificate, used to verify the TLS
+  # certificate step-ca serves its ACME endpoint with.
+  caBundle: ""
+  solverGateway:
+    # The Gateway the ACME HTTP-01 challenge routes are attached to. cert-manager creates
+    # the solver HTTPRoute in the namespace of the Certificate, so certificates issued by
+    # this ClusterIssuer have to live in the namespace of that Gateway unless its
+    # listener accepts routes from other namespaces as well.
+    name: ""
+    namespace: ""
+    # sectionName is the name of the plain HTTP listener of the Gateway. The challenge is
+    # always validated over HTTP, so pinning the listener keeps the solver routes off the
+    # HTTPS listener.
+    sectionName: ""

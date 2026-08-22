@@ -1,0 +1,32 @@
+gateway:
+  # name of the Gateway. HTTPRoutes refer to it in their parentRefs.
+  name: "gateway"
+  # gatewayClassName is the GatewayClass implementing the Gateway. Cilium creates a
+  # GatewayClass named "cilium" when its Gateway API support is enabled.
+  gatewayClassName: "cilium"
+  # address is the IP address the Gateway is published under. Cilium hands it to the
+  # LoadBalancer Service it creates for the Gateway, so the address has to be part of the
+  # CiliumLoadBalancerIPPool.
+  address: ""
+  httpListener:
+    # name of the HTTP listener, referred to by the sectionName of a parentRef.
+    name: "http"
+    port: 80
+  httpsListener:
+    # name of the HTTPS listener, referred to by the sectionName of a parentRef.
+    name: "https"
+    port: 443
+    # hostname the listener serves, also the only name the certificate below is issued for.
+    hostname: ""
+    # routeNamespaces are the namespaces HTTPRoutes are accepted from. The applications
+    # published through the Gateway live in other namespaces than the Gateway itself.
+    routeNamespaces: []
+certificate:
+  # name of the cert-manager Certificate for the HTTPS listener.
+  name: "gateway"
+  # secretName is the Secret cert-manager writes the certificate to and the HTTPS
+  # listener serves. It has to be in the namespace of the Gateway, otherwise a
+  # ReferenceGrant would be needed.
+  secretName: "gateway-tls"
+  # clusterIssuerName is the cert-manager ClusterIssuer issuing the certificate.
+  clusterIssuerName: ""

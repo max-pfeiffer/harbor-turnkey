@@ -1,0 +1,14 @@
+gateway:
+  name: "${gateway_name}"
+  address: "${gateway_address}"
+  httpListener:
+    name: "${http_listener_name}"
+  httpsListener:
+    name: "${https_listener_name}"
+    hostname: "${harbor_domain}"
+    routeNamespaces:
+      - "${harbor_namespace}"
+certificate:
+  name: "harbor"
+  secretName: "${tls_secret_name}"
+  clusterIssuerName: "${cluster_issuer_name}"

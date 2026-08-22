@@ -1,16 +1,41 @@
+# The CA material and the step-ca configuration are generated and owned by OpenTofu, see
+# certificate_authority.tf. The chart only mounts the ConfigMaps and the Secret created
+# there, so neither the chart nor the step CLI ever generates key material.
+existingSecrets:
+  enabled: true
+  # No --password-file is passed to step-ca, the intermediate key is stored unencrypted.
+  ca: false
+  issuer: false
+  # Certificates and configuration are public, only the intermediate key is a Secret.
+  certsAsSecret: false
+  configAsSecret: false
+  sshHostCa: false
+  sshUserCa: false
+  sshTemplates: false
+
+# Disable both of the chart's own bootstrapping mechanisms. Leaving `configmaps` or
+# `secrets` enabled would make the chart render empty ConfigMaps that collide with the
+# ones OpenTofu manages.
+bootstrap:
+  enabled: false
+  configmaps: false
+  secrets: false
+
+inject:
+  enabled: false
+
 ca:
   db:
     size: 1Gi
+  env:
+    # Rolls the pod whenever OpenTofu renews the CA material.
+    - name: CA_MATERIAL_REVISION
+      value: "${ca_material_revision}"
+
 image:
   repository: "smallstep/step-ca"
   imagePullSecrets:
     - "docker-hub"
-inject:
-  secrets:
-    # ca_password contains the password used to encrypt x509.intermediate_ca_key, ssh.host_ca_key and ssh.user_ca_key
-    # This value must be base64 encoded.
-    ca_password: "${root_ca_password}"
-    provisioner_password: "${root_ca_password}"
 
 service:
   targetPort: 9000

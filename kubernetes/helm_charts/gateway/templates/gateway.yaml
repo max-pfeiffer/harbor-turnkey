@@ -1,0 +1,45 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  gatewayClassName: {{ .Values.gateway.gatewayClassName }}
+  # Cilium assigns this address to the LoadBalancer Service it creates for the Gateway
+  # instead of taking the next free one from the CiliumLoadBalancerIPPool.
+  addresses:
+    - type: IPAddress
+      value: {{ .Values.gateway.address | quote }}
+  listeners:
+    # Plain HTTP is only used for the ACME HTTP-01 challenge: cert-manager creates the
+    # solver HTTPRoutes in the namespace of the Certificate, which is the namespace of
+    # this Gateway. Restricting the listener to that namespace therefore leaves it
+    # serving nothing but the challenges, and application traffic has to use HTTPS.
+    - name: {{ .Values.gateway.httpListener.name }}
+      protocol: HTTP
+      port: {{ .Values.gateway.httpListener.port }}
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: Same
+    - name: {{ .Values.gateway.httpsListener.name }}
+      protocol: HTTPS
+      port: {{ .Values.gateway.httpsListener.port }}
+      hostname: {{ .Values.gateway.httpsListener.hostname | quote }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: {{ .Values.certificate.secretName }}
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values:
+                  {{- toYaml .Values.gateway.httpsListener.routeNamespaces | nindent 18 }}

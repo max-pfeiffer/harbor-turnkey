@@ -2,15 +2,19 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "3.0.1"
+      version = "3.2.1"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "3.1.1"
+      version = "3.2.0"
     }
     harbor = {
       source  = "goharbor/harbor"
-      version = "3.11.3"
+      version = "3.12.4"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.1.0"
     }
   }
 }
