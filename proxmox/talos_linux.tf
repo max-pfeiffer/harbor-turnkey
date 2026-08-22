@@ -10,14 +10,15 @@ data "talos_machine_configuration" "controlplane" {
   config_patches = concat(
     [
       templatefile("${path.module}/machine_config_patches/controlplane.tftpl", {
-        hostname        = var.node_data.hostname
-        install_disk    = var.node_data.install_disk
-        install_image   = var.node_data.install_image
-        dns             = var.domain_name_server
-        ip_address      = "${var.node_data.ip_address}/24"
-        network         = var.network
-        network_gateway = var.network_gateway
-        cilium_manifest = data.helm_template.cilium.manifest
+        hostname             = var.node_data.hostname
+        install_disk         = var.node_data.install_disk
+        install_image        = var.node_data.install_image
+        dns                  = var.domain_name_server
+        ip_address           = "${var.node_data.ip_address}/24"
+        network              = var.network
+        network_gateway      = var.network_gateway
+        gateway_api_manifest = file("${path.module}/gateway-api/gateway-api-crds-v1.6.1.yaml")
+        cilium_manifest      = data.helm_template.cilium.manifest
       }),
     ],
     # Without a hostname Talos Linux generates one itself
