@@ -10,7 +10,7 @@ Kubernetes cluster features:
 * [Cilium v1.20.0](https://cilium.io/) as Container Network Interface (CNI) 
   * without kube-proxy
   * with [L2 loadbalancer support](https://docs.cilium.io/en/stable/network/l2-announcements/)
-  * with [Ingress controller support](https://docs.cilium.io/en/stable/network/servicemesh/ingress/)
+  * with [Gateway API support](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/)
   * with [Egress gateway support](https://docs.cilium.io/en/stable/network/egress-gateway/egress-gateway/)
 
 This Kubernetes cluster is meant to be used in a test or home lab environment.
@@ -102,14 +102,18 @@ to clients because only the root certificate needs to be trusted.
 > CA private key and the Harbor admin password.
 
 ### DNS
-The ACME HTTP-01 challenge is solved through the Harbor Ingress, so your Harbor domain has to resolve to the load
-balancer IP address of that Ingress *from inside the cluster* — usually by adding the record to the DNS server of your
-LAN, which you need anyway to use Harbor as a pull through cache. Until that record exists, `tofu apply` still
-succeeds, but the Harbor certificate stays pending; cert-manager issues it as soon as the name resolves.
+Everything is published through a single Gateway in the `network` namespace, which is published under
+`cilium_load_balancer_ip_range_start`. It terminates TLS for Harbor on port 443 and serves nothing but the ACME
+HTTP-01 challenges on port 80.
+
+The challenge is solved through that same Gateway, so your Harbor domain has to resolve to its address *from inside the
+cluster* — usually by adding the record to the DNS server of your LAN, which you need anyway to use Harbor as a pull
+through cache. Until that record exists, `tofu apply` still succeeds, but the Harbor certificate stays pending;
+cert-manager issues it as soon as the name resolves.
 
 You can check on it with:
 ```shell
-$ kubectl -n applications get certificate,order,challenge
+$ kubectl -n network get gateway,certificate,order,challenge
 ```
 
 ### Distributing the Root CA
@@ -143,6 +147,9 @@ The ACME directory of step-ca is available in the cluster, so other workloads ca
 $ tofu output -raw step_ca_acme_directory_url
 https://step-certificates.security.svc.cluster.local/acme/acme/directory
 ```
+The `step-ca` `ClusterIssuer` solves the HTTP-01 challenge on the HTTP listener of the Gateway, which only accepts
+routes from its own namespace. `Certificate` resources using it therefore have to live in the `network` namespace, or
+the challenge has to be solved with a solver of your own.
 
 ### Configure Kubernetes Cluster with the new Harbor Image Cache
 The objective is to have Harbor available as container image cache eventually. So the last step is to configure

@@ -1,15 +1,19 @@
+# Harbor is published through the Gateway in the network namespace, which terminates TLS
+# with the certificate cert-manager issues for it. The chart therefore only creates the
+# HTTPRoute attaching to that Gateway and serves plain HTTP inside the cluster.
 expose:
+  type: route
   tls:
-    enabled: true
-    certSource: secret
-    secret:
-      secretName: harbor-tls
-  ingress:
+    enabled: false
+  route:
     hosts:
-      core: ${harbor_domain}
-    className: cilium
-    annotations:
-      cert-manager.io/cluster-issuer: ${cluster_issuer_name}
+      - ${harbor_domain}
+    parentRefs:
+      - group: gateway.networking.k8s.io
+        kind: Gateway
+        name: ${gateway_name}
+        namespace: ${gateway_namespace}
+        sectionName: ${gateway_section_name}
 externalURL: ${harbor_url}
 persistence:
   persistentVolumeClaim:

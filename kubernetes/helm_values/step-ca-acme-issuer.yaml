@@ -2,4 +2,7 @@ clusterIssuer:
   name: "${cluster_issuer_name}"
   acmeDirectoryUrl: "${acme_directory_url}"
   caBundle: "${ca_bundle}"
-  solverIngressName: "${solver_ingress_name}"
+  solverGateway:
+    name: "${solver_gateway_name}"
+    namespace: "${solver_gateway_namespace}"
+    sectionName: "${solver_gateway_section_name}"

@@ -10,5 +10,13 @@ spec:
       name: {{ .Values.clusterIssuer.name }}-account-key
     solvers:
       - http01:
-          ingress:
-            name: {{ .Values.clusterIssuer.solverIngressName | quote }}
+          gatewayHTTPRoute:
+            # The solver Service is only reached by the Gateway, which runs inside the
+            # cluster, so it does not need to be published on the nodes.
+            serviceType: ClusterIP
+            parentRefs:
+              - group: gateway.networking.k8s.io
+                kind: Gateway
+                name: {{ .Values.clusterIssuer.solverGateway.name | quote }}
+                namespace: {{ .Values.clusterIssuer.solverGateway.namespace | quote }}
+                sectionName: {{ .Values.clusterIssuer.solverGateway.sectionName | quote }}

@@ -18,7 +18,8 @@ docker_hub_email    = "me@example.com"
 github_username = "your-user-name"
 github_password = "your-access-token"
 
-# Cilium Load Balancer
+# Cilium Load Balancer. The Gateway all applications are published through gets the first
+# address of this range, so harbor_domain has to resolve to it.
 cilium_load_balancer_ip_range_start = "192.168.1.17"
 cilium_load_balancer_ip_range_stop  = "192.168.1.19"
 

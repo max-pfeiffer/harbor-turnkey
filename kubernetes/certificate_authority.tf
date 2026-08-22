@@ -79,7 +79,7 @@ locals {
   step_ca_acme_provisioner   = "acme"
   step_ca_acme_directory_url = "${local.step_ca_url}/acme/${local.step_ca_acme_provisioner}/directory"
 
-  # Name of the cert-manager ClusterIssuer that Ingress resources refer to.
+  # Name of the cert-manager ClusterIssuer that Certificate resources refer to.
   acme_cluster_issuer_name = "step-ca"
 
   # step-ca issues its own TLS server certificate for these names.

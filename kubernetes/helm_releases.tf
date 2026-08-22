@@ -1,8 +1,13 @@
 locals {
   harbor_release_name = "harbor"
-  # Name of the Ingress the Harbor chart creates. ACME HTTP-01 challenge routes are
-  # inserted into it, so it has to be known before the release exists.
-  harbor_ingress_name = "${local.harbor_release_name}-ingress"
+
+  # The Gateway every application is published through. Its name, the names of its
+  # listeners and the Secret holding its certificate are referenced by the ClusterIssuer
+  # and by the Harbor release, so they have to be known before the Gateway exists.
+  gateway_name                = "gateway"
+  gateway_http_listener_name  = "http"
+  gateway_https_listener_name = "https"
+  gateway_tls_secret_name     = "harbor-tls"
 }
 
 resource "helm_release" "cilium_lb_config" {
@@ -61,6 +66,13 @@ resource "helm_release" "cert_manager" {
     {
       name  = "crds.enabled"
       value = "true"
+    },
+    # Gateway API support is what makes cert-manager solve the ACME HTTP-01 challenge
+    # with a HTTPRoute attached to the Gateway instead of with an Ingress.
+    # See: https://cert-manager.io/docs/usage/gateway/
+    {
+      name  = "config.gatewayAPI.enabled"
+      value = "true"
     }
   ]
 }
@@ -79,10 +91,40 @@ resource "helm_release" "step_ca_acme_issuer" {
   timeout   = 60
   values = [
     templatefile("${path.module}/helm_values/step-ca-acme-issuer.yaml", {
+      cluster_issuer_name         = local.acme_cluster_issuer_name
+      acme_directory_url          = local.step_ca_acme_directory_url
+      ca_bundle                   = base64encode(tls_self_signed_cert.root_ca.cert_pem)
+      solver_gateway_name         = local.gateway_name
+      solver_gateway_namespace    = kubernetes_namespace_v1.network.id
+      solver_gateway_section_name = local.gateway_http_listener_name
+    })
+  ]
+}
+
+# The Gateway is published under the first address of the Cilium load balancer IP range
+# and terminates TLS for Harbor. It comes with the cert-manager Certificate for its HTTPS
+# listener, which is issued through the ACME HTTP-01 challenge on its HTTP listener. Like
+# the ClusterIssuer it lives in a local chart, because the Gateway API and cert-manager
+# custom resources it consists of only exist after the releases above.
+resource "helm_release" "gateway" {
+  depends_on = [
+    helm_release.cilium_lb_config,
+    helm_release.step_ca_acme_issuer,
+  ]
+  name      = local.gateway_name
+  chart     = "${path.module}/helm_charts/gateway"
+  namespace = kubernetes_namespace_v1.network.id
+  timeout   = 60
+  values = [
+    templatefile("${path.module}/helm_values/gateway.yaml", {
+      gateway_name        = local.gateway_name
+      gateway_address     = var.cilium_load_balancer_ip_range_start
+      http_listener_name  = local.gateway_http_listener_name
+      https_listener_name = local.gateway_https_listener_name
+      harbor_domain       = var.harbor_domain
+      harbor_namespace    = kubernetes_namespace_v1.applications.id
+      tls_secret_name     = local.gateway_tls_secret_name
       cluster_issuer_name = local.acme_cluster_issuer_name
-      acme_directory_url  = local.step_ca_acme_directory_url
-      ca_bundle           = base64encode(tls_self_signed_cert.root_ca.cert_pem)
-      solver_ingress_name = local.harbor_ingress_name
     })
   ]
 }
@@ -90,7 +132,6 @@ resource "helm_release" "step_ca_acme_issuer" {
 resource "helm_release" "harbor" {
   depends_on = [
     kubernetes_secret_v1.docker_hub_namespace_applications,
-    helm_release.step_ca_acme_issuer,
     kubernetes_storage_class_v1.local,
     kubernetes_persistent_volume_v1.local_large_1,
     kubernetes_persistent_volume_v1.local_small_2,
@@ -98,6 +139,7 @@ resource "helm_release" "harbor" {
     kubernetes_persistent_volume_v1.local_small_4,
     kubernetes_persistent_volume_v1.local_small_5,
     helm_release.cilium_lb_config,
+    helm_release.gateway,
   ]
   name       = local.harbor_release_name
   chart      = "harbor"
@@ -107,9 +149,11 @@ resource "helm_release" "harbor" {
   timeout    = 120
   values = [
     templatefile("${path.module}/helm_values/harbor.yaml", {
-      harbor_domain       = var.harbor_domain,
-      harbor_url          = var.harbor_url,
-      cluster_issuer_name = local.acme_cluster_issuer_name
+      harbor_domain        = var.harbor_domain,
+      harbor_url           = var.harbor_url,
+      gateway_name         = local.gateway_name,
+      gateway_namespace    = kubernetes_namespace_v1.network.id,
+      gateway_section_name = local.gateway_https_listener_name
     })
   ]
 }
