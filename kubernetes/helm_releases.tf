@@ -31,7 +31,7 @@ resource "helm_release" "step_certificates" {
   ]
   name       = local.step_ca_name
   chart      = "step-certificates"
-  version    = "1.29.0"
+  version    = "1.30.1"
   repository = "https://smallstep.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.security.id
   timeout    = 300
@@ -48,7 +48,7 @@ resource "helm_release" "cert_manager" {
   ]
   name       = "cert-manager"
   chart      = "cert-manager"
-  version    = "1.19.2"
+  version    = "1.21.1"
   repository = "https://charts.jetstack.io"
   namespace  = kubernetes_namespace_v1.cert_manager.id
   timeout    = 120
@@ -101,7 +101,7 @@ resource "helm_release" "harbor" {
   ]
   name       = local.harbor_release_name
   chart      = "harbor"
-  version    = "1.18.1"
+  version    = "1.19.2"
   repository = "https://helm.goharbor.io"
   namespace  = kubernetes_namespace_v1.applications.id
   timeout    = 120

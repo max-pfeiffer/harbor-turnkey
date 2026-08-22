@@ -164,11 +164,11 @@ well documented](https://www.talos.dev/v1.10/talos-guides/configuration/pull-thr
     * [terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor)
   * Certificate Authority
     * [terraform-provider-tls](https://github.com/hashicorp/terraform-provider-tls)
-* Helm charts:
-  * Certificate Authority
-    * [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates)
-    * [step-ca ACME provisioner](https://smallstep.com/docs/step-ca/acme-basics/)
-  * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
-    * [ACME issuer](https://cert-manager.io/docs/configuration/acme/)
+* Helm charts
+  * [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates)
+  * [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager) 
   * [Harbor](https://github.com/goharbor/harbor-helm)
   * [Cilium](https://artifacthub.io/packages/helm/cilium/cilium)
+* CA configuration
+  * [ACME issuer](https://cert-manager.io/docs/configuration/acme/)
+  * [step-ca ACME provisioner](https://smallstep.com/docs/step-ca/acme-basics/)
