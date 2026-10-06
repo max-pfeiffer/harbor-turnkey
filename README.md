@@ -1,3 +1,8 @@
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![OpenTofu](https://img.shields.io/badge/OpenTofu-FFDA18?logo=opentofu&logoColor=black)](https://opentofu.org/)
+[![Code quality](https://github.com/max-pfeiffer/harbor-turnkey/actions/workflows/code-quality.yaml/badge.svg)](https://github.com/max-pfeiffer/harbor-turnkey/actions/workflows/code-quality.yaml)
+[![Release](https://github.com/max-pfeiffer/harbor-turnkey/actions/workflows/release.yaml/badge.svg)](https://github.com/max-pfeiffer/harbor-turnkey/actions/workflows/release.yaml)
+
 # Harbor Turnkey
 This infrastructure as code (IaC) project installs [Harbor](https://goharbor.io/) on a single node Kubernetes cluster.
 It uses [Talos Linux](https://www.talos.dev/) as an operating system for running Kubernetes and
@@ -151,7 +156,7 @@ The `step-ca` `ClusterIssuer` solves the HTTP-01 challenge on the HTTP listener 
 routes from its own namespace. `Certificate` resources using it therefore have to live in the `network` namespace, or
 the challenge has to be solved with a solver of your own.
 
-### Configure Kubernetes Cluster with the new Harbor Image Cache
+## Configure Kubernetes Cluster with the new Harbor Image Cache
 The objective is to have Harbor available as container image cache eventually. So the last step is to configure
 the image cache for your Kubernetes nodes. As this is specific to the container runtime and registry you are using, I
 need to exclude instructions here. For those using Talos Linux for running their cluster, [this is straight forward and
