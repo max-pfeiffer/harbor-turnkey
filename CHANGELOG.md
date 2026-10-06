@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/max-pfeiffer/harbor-turnkey/compare/2.0.0...2.0.1) (2026-10-06)
+
+
+### Documentation
+
+* added badges to Readme ([1fc82d5](https://github.com/max-pfeiffer/harbor-turnkey/commit/1fc82d55dafd500d26f1a3382e55c29d60d28e1f))
+* added badges to Readme ([6bc509d](https://github.com/max-pfeiffer/harbor-turnkey/commit/6bc509d6f9d2b5da6112db8a58f2aa862afbb6bd))
+
 ## [2.0.0](https://github.com/max-pfeiffer/harbor-turnkey/compare/1.1.0...2.0.0) (2026-08-22)
 
 
